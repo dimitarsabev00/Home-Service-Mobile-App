@@ -9,7 +9,7 @@ const IndexPage = () => {
     return null; // Optionally, add a loading spinner here
   }
 
-  return isSignedIn ? <Redirect href="/home" /> : <Redirect href="/login" />;
+  return isSignedIn ? <Redirect href="/(tabs)" /> : <Redirect href="/login" />;
 };
 
 export default IndexPage;

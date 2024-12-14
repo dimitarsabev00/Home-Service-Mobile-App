@@ -44,7 +44,7 @@ const Login = () => {
         console.log("Login successful, session set.");
 
         // Manually navigate to home after setting the session
-        router.replace("/home");
+        router.replace("/(tabs)");
       } else {
         console.log("No session created. Handle MFA or other flows here.");
       }

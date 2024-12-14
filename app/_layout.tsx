@@ -32,7 +32,7 @@ export default function RootLayout() {
     >
       <SignedIn>
         <Stack>
-          <Stack.Screen name="home" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
       </SignedIn>
       <SignedOut>
