@@ -1,53 +1,94 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  SafeAreaView,
+} from "react-native";
 import colors from "@/utils/colors";
+import * as WebBrowser from "expo-web-browser";
+import { useOAuth } from "@clerk/clerk-expo";
+import * as Linking from "expo-linking";
+import { useRouter } from "expo-router";
+
+export const useWarmUpBrowser = () => {
+  React.useEffect(() => {
+    void WebBrowser.warmUpAsync();
+    return () => {
+      void WebBrowser.coolDownAsync();
+    };
+  }, []);
+};
+
+WebBrowser.maybeCompleteAuthSession();
 
 const Login = () => {
-  const handleGetStarted = () => {};
+  useWarmUpBrowser();
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+  const router = useRouter(); // Router for manual navigation
+
+  const handleGetStarted = React.useCallback(async () => {
+    try {
+      const redirectUrl = Linking.createURL("/", {
+        scheme: "home-service-mobile-app",
+      });
+
+      const { createdSessionId, setActive } = await startOAuthFlow({
+        redirectUrl,
+      });
+
+      if (createdSessionId) {
+        await setActive({ session: createdSessionId }); // Set the session
+        console.log("Login successful, session set.");
+
+        // Manually navigate to home after setting the session
+        router.replace("/home");
+      } else {
+        console.log("No session created. Handle MFA or other flows here.");
+      }
+    } catch (err) {
+      console.error("OAuth Error:", JSON.stringify(err, null, 2));
+    }
+  }, [router]);
 
   return (
-    <View style={{ alignItems: "center" }}>
-      <Image
-        source={require("../assets/images/login.png")}
-        style={styles.loginImage}
-      />
-      <View style={styles.subContainer}>
-        <Text
-          style={{ fontSize: 27, color: colors.WHITE, textAlign: "center" }}
-        >
-          Let's Find
-          <Text style={{ fontWeight: "bold" }}>
-            {" "}
-            Professional Cleaning and repair
-          </Text>{" "}
-          Service
-        </Text>
-        <Text
-          style={{
-            fontSize: 17,
-            color: colors.WHITE,
-            textAlign: "center",
-            marginTop: 20,
-          }}
-        >
-          Best App to find services near you which deliver you a professional
-          service
-        </Text>
-
-        <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
-          <Text
-            style={{ textAlign: "center", fontSize: 17, color: colors.PRIMARY }}
-          >
-            Let's Get Started
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.PRIMARY }}>
+      <View style={styles.container}>
+        <Image
+          source={require("../assets/images/login.png")}
+          style={styles.loginImage}
+        />
+        <View style={styles.subContainer}>
+          <Text style={styles.headingText}>
+            Let's Find
+            <Text style={styles.boldText}>
+              {" "}
+              Professional Cleaning and Repair
+            </Text>{" "}
+            Service
           </Text>
-        </TouchableOpacity>
+          <Text style={styles.subText}>
+            Best app to find services near you that deliver professional service
+          </Text>
+
+          <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
+            <Text style={styles.buttonText}>Let's Get Started</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
+
 export default Login;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+  },
   loginImage: {
     width: 230,
     height: 450,
@@ -65,10 +106,29 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     padding: 20,
   },
+  headingText: {
+    fontSize: 27,
+    color: colors.WHITE,
+    textAlign: "center",
+  },
+  boldText: {
+    fontWeight: "bold",
+  },
+  subText: {
+    fontSize: 17,
+    color: colors.WHITE,
+    textAlign: "center",
+    marginTop: 20,
+  },
   button: {
     padding: 15,
     backgroundColor: colors.WHITE,
     borderRadius: 99,
     marginTop: 40,
+  },
+  buttonText: {
+    textAlign: "center",
+    fontSize: 17,
+    color: colors.PRIMARY,
   },
 });
