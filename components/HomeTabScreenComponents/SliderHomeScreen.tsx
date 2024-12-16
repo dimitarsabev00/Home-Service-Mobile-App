@@ -34,8 +34,8 @@ function SliderHomeScreen() {
 
 const styles = StyleSheet.create({
   sliderImage: {
-    width: 270,
-    height: 150,
+    width: 250,
+    height: 250,
     borderRadius: 20,
     resizeMode: "contain",
   },
