@@ -3,6 +3,7 @@ import React from "react";
 import HeaderHomeScreen from "@/components/HomeTabScreenComponents/HeaderHomeScreen";
 import SliderHomeScreen from "@/components/HomeTabScreenComponents/SliderHomeScreen";
 import CategoriesHomeScreen from "@/components/HomeTabScreenComponents/CategoriesHomeScreen";
+import BusinessListHomeScreen from "@/components/HomeTabScreenComponents/BusinessListHomeScreen";
 
 export default function HomeScreen() {
   return (
@@ -14,6 +15,9 @@ export default function HomeScreen() {
 
         {/* Categories Section */}
         <CategoriesHomeScreen />
+
+        {/* Business List Section */}
+        <BusinessListHomeScreen />
       </View>
     </ScrollView>
   );
